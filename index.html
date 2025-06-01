@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: #dbefff;
+      font-family: Arial, sans-serif;
+      height: 100%;
+      overflow-x: hidden;
+    }
+    #controls {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 10;
+      background: #ffffffdd;
+      padding: 12px;
+      border-radius: 10px;
+      max-width: 320px;
+    }
+    #optionsPanel {
+      margin: 0 auto;
+      background: #ffffffdd;
+      padding: 12px;
+      border-radius: 10px;
+      width: 100vw;
+      max-width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      box-sizing: border-box;
+      justify-content: center;
+    }
+    #statsPanel {
+      margin: 10px auto;
+      background: #ffffffdd;
+      padding: 12px;
+      border-radius: 10px;
+      width:  100vw;
+      max-width: 100%;
+      box-sizing: border-box;
+      font-size: 14px;
+      text-align: center;
+    }
+    #tradeHistory {
+      margin: 10px auto;
+      background: #ffffffdd;
+      padding: 12px;
+      border-radius: 10px;
+      width: 100vw;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .log-entry {
+      font-size: 13px;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 4px;
+      padding-bottom: 4px;
+    }
+    #chart {
+      width: 100vw;
+      height: 60vh;
+      box-sizing: border-box;
+    }
+    @media (max-width: 768px) {
+      #optionsPanel {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+    .tooltip {
+      position: absolute;
+      background: #333;
+      color: #fff;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+      padding: 8px;
+      font-size: 12px;
+      display: none;
+      pointer-events: none;
+      z-index: 99;
+      transition: opacity 0.2s ease-in-out;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .overlay-label {
+      position: absolute;
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 2px 4px;
+      border-radius: 4px;
+      pointer-events: none;
+      z-index: 100;
+      color: #000;
+    }
+    #legend {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ffffffdd;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+
+<div id="chart"></div>
+<div class="tooltip" id="tooltip"></div>
+<div id="legend">
+  <strong>Legend:</strong><br>
+  <span style="color: blue;">SMA</span>,
+  <span style="color: orange;">EMA</span>,
+  <span style="color: purple;">Bollinger Bands</span>,
+  <span style="color: grey;">Volume</span>,<br>
+  <span style="color: green;">MACD</span>,
+  <span style="color: red;">RSI</span>,
+  <span style="color: brown;">ADX</span>
+</div>
+
+<div id="optionsPanel">
+  <label>Trade Size:
+    <input type="number" id="tradeSize" value="1" min="1" step="1">
+  </label>
+  <label>Option Type:
+    <select id="optionType">
+      <option value="call">Call</option>
+      <option value="put">Put</option>
+    </select>
+  </label>
+  <label>Strike Price:
+    <input type="number" id="strikePrice" placeholder="Strike Price" step="0.01">
+  </label>
+  <label>Expiry (days):
+    <input type="number" id="expiry" placeholder="e.g. 1" step="1">
+  </label>
+  <label>IV (%):
+    <input type="number" id="iv" placeholder="e.g. 20" step="0.1">
+  </label>
+  <label>Delta:
+    <input type="number" id="delta" placeholder="e.g. 0.5" step="0.01">
+  </label>
+  <label>Technical Studies:
+    <select id="studySelector" multiple size="7" onchange="applyStudies()">
+      <option value="sma">Simple Moving Average</option>
+      <option value="ema">Exponential Moving Average</option>
+      <option value="bollinger">Bollinger Bands</option>
+      <option value="volume">Volume Bars</option>
+      <option value="macd">MACD Histogram</option>
+      <option value="rsi">Relative Strength Index</option>
+      <option value="adx">Average Directional Index</option>
+    </select>
+  </label>
+  <label>Chart Timeframe:
+    <select id="timeframeSelector" onchange="changeTimeframe()">
+      <option value="180">3 Minutes</option>
+      <option value="300">5 Minutes</option>
+      <option value="600">10 Minutes</option>
+      <option value="900">15 Minutes</option>
+      <option value="86400">1 Day</option>
+      <option value="604800">7 Days</option>
+      <option value="2592000">30 Days</option>
+    </select>
+  </label>
+  <button onclick="buyTrade()">Buy</button>
+  <button onclick="sellTrade()">Sell</button>
+</div>
+
+<div id="statsPanel">
+  <strong>Balance:</strong> $<span id="balance">150000.00</span> &nbsp;&nbsp;
+  <strong>Daily PnL:</strong> $<span id="dailyPnl">0.00</span>
+</div>
+
+<div id="tradeHistory">
+  <h4>Trade History</h4>
+  <div id="logContainer"></div>
+</div>
+
+<script src="https://unpkg.com/lightweight-charts@4.0.1/dist/lightweight-charts.standalone.production.js"></script>
+<script>
+// Additional indicator rendering code for RSI, MACD, and ADX will go here
+</script>
+</body>
+</html>
